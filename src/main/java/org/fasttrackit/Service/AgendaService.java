@@ -5,6 +5,7 @@ import org.fasttrackit.Persistence.AgendaRepository;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.List;
 
 public class AgendaService {
     AgendaRepository agendaRepository=new AgendaRepository();
@@ -14,8 +15,11 @@ public class AgendaService {
         agendaRepository.createContact(agenda);
     }
 
-    /*public List<Animal> getAnimalRescuer() throws SQLException, IOException, ClassNotFoundException {
-        System.out.println("Getting to do items: ");
-        return animalRescuerRepository.getAnimalRescuer();
-    }*/
+    public List<Agenda> getContact() throws SQLException, IOException, ClassNotFoundException {
+        return agendaRepository.getContact();
+    }
+
+    public void searchContact(String optionSearch) throws SQLException {
+        agendaRepository.searchContact(optionSearch);
+    }
 }

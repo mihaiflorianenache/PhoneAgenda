@@ -20,7 +20,7 @@ public class AgendaRepository {
         }
     }
 
-    public List<Agenda> getAgendaRepository() throws SQLException, IOException, ClassNotFoundException {
+    public List<Agenda> getContact() throws SQLException, IOException, ClassNotFoundException {
         try(Connection connection= DatabaseConfiguration.getConnection()){
             String query="SELECT id,`firstName`,`lastName`,`phoneNumber` FROM agenda ORDER BY firstName desc";
             Statement statement=connection.createStatement();
@@ -38,6 +38,20 @@ public class AgendaRepository {
                 response.add(agenda);
             }
             return response;
+        }
+    }
+
+    public void searchContact(String optionSearch) throws SQLException {
+        try(Connection connection=DriverManager.getConnection()) {
+            String query = "SELECT id,`firstName`,`lastName`,`phoneNumber` FROM agenda WHERE "+optionSearch+"='mihai'";
+            Statement statement = connection.createStatement();
+            statement.execute(query);
+
+            ResultSet resultSet=statement.executeQuery(query);
+            List<Agenda> searchedContact=new ArrayList<>();
+            while(resultSet.next()){
+
+            }
         }
     }
  }
