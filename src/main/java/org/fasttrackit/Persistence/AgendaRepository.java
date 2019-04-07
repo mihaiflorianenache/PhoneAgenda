@@ -2,6 +2,7 @@ package org.fasttrackit.Persistence;
 
 import org.fasttrackit.Domain.Agenda;
 import org.fasttrackit.Domain.FirstNameFromDatabase;
+import org.fasttrackit.Domain.LastNameFromDatabase;
 
 import java.io.IOException;
 import java.sql.*;
@@ -44,9 +45,9 @@ public class AgendaRepository {
         }
     }
 
-    public List<Agenda> searchContact(String optionSearch) throws SQLException, IOException, ClassNotFoundException {
+    public List<Agenda> searchContact(String optionSearch,String firstNameOrLastName) throws SQLException, IOException, ClassNotFoundException {
         try(Connection connection=DatabaseConfiguration.getConnection()) {
-            String query = "SELECT id,`firstName`,`lastName`,`phoneNumber` FROM agenda WHERE "+optionSearch+"='mihai'";
+            String query = "SELECT id,`firstName`,`lastName`,`phoneNumber` FROM agenda WHERE "+optionSearch+"="+"'"+firstNameOrLastName+"'";
             Statement statement = connection.createStatement();
             statement.execute(query);
 
@@ -78,6 +79,23 @@ public class AgendaRepository {
                 allFirstNames.push(firstNameFromDatabase);
             }
             return allFirstNames;
+        }
+    }
+
+    public Stack<LastNameFromDatabase> searchLastName()throws SQLException, IOException, ClassNotFoundException{
+        try(Connection connection=DatabaseConfiguration.getConnection()){
+            String query="SELECT DISTINCT lastName FROM agenda;";
+            Statement statement=connection.createStatement();
+            statement.execute(query);
+
+            ResultSet resultSet=statement.executeQuery(query);
+            Stack<LastNameFromDatabase> allLastNames=new Stack<>();
+            while(resultSet.next()){
+                LastNameFromDatabase lastNameFromDatabase=new LastNameFromDatabase();
+                lastNameFromDatabase.setLastName(resultSet.getString("lastName"));
+                allLastNames.push(lastNameFromDatabase);
+            }
+            return allLastNames;
         }
     }
 

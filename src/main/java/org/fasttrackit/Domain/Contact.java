@@ -4,15 +4,14 @@ import org.fasttrackit.Service.AgendaService;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.InputMismatchException;
-import java.util.List;
-import java.util.Scanner;
-import java.util.Stack;
+import java.util.*;
 
 public class Contact {
 
-    Agenda agenda = new Agenda();
-    Stack<String> searchAfterName = new Stack<>();
+    private Agenda agenda = new Agenda();
+    private Stack<String> searchAfterName = new Stack<>();
+    private String firstNameAfterYouChoose;
+    private String firstName="firstName";
 
     private void settingFirstName() throws MyException {
         System.out.println("Write your first name");
@@ -119,16 +118,21 @@ public class Contact {
                 System.out.println("Choose a contact after one of the follow first names");
                 for (FirstNameFromDatabase firstNameFromDatabase : agendaService.getFirstName()) {
                     System.out.println(firstNameFromDatabase.getFirstName());
-                    searchAfterName.push(firstNameFromDatabase.getFirstName());
+                    searchAfterName.add(firstNameFromDatabase.getFirstName());
                 }
-                chooseContactAfterFirstName(searchAfterName);
+                firstNameAfterYouChoose=chooseContactAfterFirstName(searchAfterName);
                 System.out.println("The contacts are");
-                searchPhisicallyContact("firstName", agendaService);
+                searchPhisicallyContact(firstNameAfterYouChoose,agendaService,firstName);
             } else if (chooseMethodSearchContact == 2) {
+                System.out.println("Choose a contact after follow last names");
+                for(LastNameFromDatabase lastNameFromDatabase:agendaService.getLastName()){
+                    System.out.println(lastNameFromDatabase.getLastName());
+                    searchAfterName.add(lastNameFromDatabase.getLastName());
+                }
+                lastNameAfterYouChoose=chooseContactAfterLastName();
                 System.out.println("You choose after last name");
-
                 System.out.println("The contacts are");
-                searchPhisicallyContact("lastName", agendaService);
+                //searchPhisicallyContact("lastName", agendaService);
             }
         } catch (InputMismatchException exception) {
             System.out.println("You must to choose a contact according to options who are show above");
@@ -137,7 +141,7 @@ public class Contact {
         return 0;
     }
 
-    private String chooseContactAfterFirstName(Stack<String> searchAfterName) {
+    private String chooseContactAfterFirstName(List<String> searchAfterName) {
         int i;
         try {
             System.out.println("Choose a first name after you want to search between: ");
@@ -148,17 +152,15 @@ public class Contact {
             Scanner scanner = new Scanner(System.in);
             int optionFirstName = scanner.nextInt();
             if (optionFirstName < 1 || optionFirstName > searchAfterName.size()) return chooseContactAfterFirstName(searchAfterName);
-            else
-                for(i=0)
+            else return searchAfterName.get(optionFirstName-1);
         }catch(InputMismatchException exception){
             System.out.println("You must select a option from above");
             return chooseContactAfterFirstName(searchAfterName);
         }
-        return null;
     }
 
-    private void searchPhisicallyContact(String optionSearch, AgendaService agendaService) throws SQLException, IOException, ClassNotFoundException {
-        for (Agenda agenda : agendaService.searchContact(optionSearch)) {
+    private void searchPhisicallyContact(String searchAfterFirstNameOrLastName,AgendaService agendaService,String firstNameOrLastName) throws SQLException, IOException, ClassNotFoundException{
+        for(Agenda agenda:agendaService.searchContactAfterFirstNameOrLastName(firstNameOrLastName,searchAfterFirstNameOrLastName)){
             System.out.println("Id: " + agenda.getId() + ",First name: " + agenda.getFirstName() + ",Last name: " + agenda.getLastName() + ",Phone number: " + agenda.getPhoneNumber());
         }
     }

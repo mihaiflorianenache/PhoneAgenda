@@ -2,6 +2,7 @@ package org.fasttrackit.Service;
 
 import org.fasttrackit.Domain.Agenda;
 import org.fasttrackit.Domain.FirstNameFromDatabase;
+import org.fasttrackit.Domain.LastNameFromDatabase;
 import org.fasttrackit.Persistence.AgendaRepository;
 
 import java.io.IOException;
@@ -21,11 +22,15 @@ public class AgendaService {
         return agendaRepository.getContact();
     }
 
-    public List<Agenda> searchContact(String optionSearch) throws SQLException, IOException, ClassNotFoundException {
-        return agendaRepository.searchContact(optionSearch);
+    public List<Agenda> searchContactAfterFirstNameOrLastName(String firstNameOrLastName,String optionSearch) throws SQLException, IOException, ClassNotFoundException{
+        return agendaRepository.searchContact(firstNameOrLastName,optionSearch);
     }
 
     public Stack<FirstNameFromDatabase> getFirstName()throws SQLException, IOException, ClassNotFoundException{
         return agendaRepository.searchFirstName();
+    }
+
+    public Stack<LastNameFromDatabase> getLastName()throws SQLException, IOException, ClassNotFoundException{
+        return agendaRepository.searchLastName();
     }
 }
