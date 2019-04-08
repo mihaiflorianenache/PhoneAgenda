@@ -67,7 +67,9 @@ public class AgendaRepository {
 
     public Stack<FirstNameFromDatabase> searchFirstName()throws SQLException, IOException, ClassNotFoundException{
         try(Connection connection=DatabaseConfiguration.getConnection()){
+
             String query="SELECT DISTINCT firstName FROM agenda;";
+
             Statement statement=connection.createStatement();
             statement.execute(query);
 
@@ -79,6 +81,38 @@ public class AgendaRepository {
                 allFirstNames.push(firstNameFromDatabase);
             }
             return allFirstNames;
+        }
+    }
+
+    /*private void callDistinctMethodFirstName()throws SQLException, IOException, ClassNotFoundException{
+        Stack<String> distinctFirstName=new Stack<>();
+        String search;
+        int i,j;
+        for(String browseStackFirstName:distinctMethodFirstName()){
+            for(i=0;i<distinctFirstName.size();i++) {
+                search=distinctFirstName.get(i);
+                for(j=0;j<search.trim().length();j++){
+                    if(search.charAt(j))
+                }
+                //distinctFirstName.push(browseStackFirstName);
+            }
+        }
+    }*/
+
+    private Stack<String> distinctMethodFirstName()throws SQLException, IOException, ClassNotFoundException{
+        try(Connection connection=DatabaseConfiguration.getConnection()) {
+            String query = "SELECT firstName FROM agenda";
+            Statement statement=connection.createStatement();
+            statement.executeQuery(query);
+
+            ResultSet resultSet=statement.executeQuery(query);
+            Stack<String> solelyFirstName=new Stack<>();
+            while(resultSet.next()){
+                String onlyFirstName=new String();
+                onlyFirstName=resultSet.getString("firstName");
+                solelyFirstName.push(onlyFirstName);
+            }
+            return solelyFirstName;
         }
     }
 

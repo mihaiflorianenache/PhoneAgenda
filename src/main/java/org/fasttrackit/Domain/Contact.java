@@ -11,7 +11,9 @@ public class Contact {
     private Agenda agenda = new Agenda();
     private Stack<String> searchAfterName = new Stack<>();
     private String firstNameAfterYouChoose;
+    private String lastNameAfterYouChoose;
     private String firstName="firstName";
+    private String lastName="lastName";
 
     private void settingFirstName() throws MyException {
         System.out.println("Write your first name");
@@ -56,6 +58,15 @@ public class Contact {
                 throw new MyException("Last name can contains only letters");
         }
 
+        int numberSpace=0;
+        for(i=0;i<lastName.length();i++){
+            if(lastName.charAt(i)==' ' || lastName.charAt(i)=='\t')
+                numberSpace++;
+        }
+        if(numberSpace==lastName.length()){
+            throw new MyException("This is not a last name");
+        }
+
         if (lastName.trim().charAt(0) < (int) 'A' || lastName.trim().charAt(0) > (int) 'Z') {
             throw new MyException("Last name must begin with uppercase character");
         }
@@ -80,7 +91,7 @@ public class Contact {
             if ((phoneNumber.trim().charAt(i) < (int) '0' || phoneNumber.trim().charAt(i) > (int) '9') && phoneNumber.trim().charAt(i) != '+' && phoneNumber.trim().charAt(i) != '-')
                 throw new MyException("The phone number must contains only digits, + and/or - sign");
         }
-        agenda.setPhoneNumber(phoneNumber);
+        agenda.setPhoneNumber(phoneNumber.trim());
     }
 
     private void callSettingsPhoneNumber() {
@@ -95,10 +106,11 @@ public class Contact {
     public void createContact() throws SQLException, IOException, ClassNotFoundException {
         /*callSettingsFirstName();
         callSettingsLastName();
-        callSettingsPhoneNumber();
+        callSettingsPhoneNumber();*/
 
-        agendaService.createContact(agenda);*/
         AgendaService agendaService = new AgendaService();
+        //agendaService.createContact(agenda);
+
         System.out.println("The agend contains follow contacts:");
         for (Agenda phoneList : agendaService.getContact()) {
             System.out.println("Id: " + phoneList.getId() + ",First name: " + phoneList.getFirstName() + ",Last name: " + phoneList.getLastName() + ",Phone number: " + phoneList.getPhoneNumber());
@@ -108,7 +120,6 @@ public class Contact {
     }
 
     private int searchContact(AgendaService agendaService) throws SQLException, IOException, ClassNotFoundException {
-
         System.out.println("How do you want to search a contact between first name and last name ? 1-first name, 2-last name");
         try {
             Scanner scanner = new Scanner(System.in);
@@ -120,7 +131,7 @@ public class Contact {
                     System.out.println(firstNameFromDatabase.getFirstName());
                     searchAfterName.add(firstNameFromDatabase.getFirstName());
                 }
-                firstNameAfterYouChoose=chooseContactAfterFirstName(searchAfterName);
+                firstNameAfterYouChoose=chooseContactAfterFirstName();
                 System.out.println("The contacts are");
                 searchPhisicallyContact(firstNameAfterYouChoose,agendaService,firstName);
             } else if (chooseMethodSearchContact == 2) {
@@ -130,9 +141,8 @@ public class Contact {
                     searchAfterName.add(lastNameFromDatabase.getLastName());
                 }
                 lastNameAfterYouChoose=chooseContactAfterLastName();
-                System.out.println("You choose after last name");
                 System.out.println("The contacts are");
-                //searchPhisicallyContact("lastName", agendaService);
+                searchPhisicallyContact(lastNameAfterYouChoose,agendaService,lastName);
             }
         } catch (InputMismatchException exception) {
             System.out.println("You must to choose a contact according to options who are show above");
@@ -141,21 +151,39 @@ public class Contact {
         return 0;
     }
 
-    private String chooseContactAfterFirstName(List<String> searchAfterName) {
+    private String chooseContactAfterFirstName() {
         int i;
         try {
             System.out.println("Choose a first name after you want to search between: ");
             for (i = 0; i < searchAfterName.size(); i++) {
                 if (i != searchAfterName.size() - 1) System.out.print((i + 1) + "-" + searchAfterName.get(i) + ", ");
-                else System.out.print((i + 1) + "-" + searchAfterName.get(i));
+                else System.out.print((i + 1) + "-" + searchAfterName.get(i)+"\n");
             }
             Scanner scanner = new Scanner(System.in);
             int optionFirstName = scanner.nextInt();
-            if (optionFirstName < 1 || optionFirstName > searchAfterName.size()) return chooseContactAfterFirstName(searchAfterName);
+            if (optionFirstName < 1 || optionFirstName > searchAfterName.size()) return chooseContactAfterFirstName();
             else return searchAfterName.get(optionFirstName-1);
         }catch(InputMismatchException exception){
             System.out.println("You must select a option from above");
-            return chooseContactAfterFirstName(searchAfterName);
+            return chooseContactAfterFirstName();
+        }
+    }
+
+    private String chooseContactAfterLastName(){
+        int i;
+        System.out.println("Choose a last name after you want to search between:");
+        try{
+            for(i=0;i<searchAfterName.size();i++){
+                if (i != searchAfterName.size() - 1) System.out.print((i + 1) + "-" + searchAfterName.get(i) + ", ");
+                else System.out.print((i + 1) + "-" + searchAfterName.get(i)+"\n");
+            }
+            Scanner scanner =new Scanner(System.in);
+            int optionLastName=scanner.nextInt();
+            if(optionLastName<1 || optionLastName>searchAfterName.size()) return chooseContactAfterLastName();
+            else return searchAfterName.get(optionLastName-1);
+        }catch(InputMismatchException exception){
+            System.out.println("You must select a option from above");
+            return chooseContactAfterLastName();
         }
     }
 
